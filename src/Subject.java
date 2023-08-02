@@ -11,12 +11,11 @@ public class Subject
     private int grade;//оцінка
 
     //ініціалізуємо конструктор для створення об'єкта классу
-    public Subject (String teacher, String subject_name, int grade)
+    public Subject (String teacher, String subject_name)
     {
         this.id_subject = Get_new_SubID();
         this.teacher = teacher;
         this.subject_name = subject_name;
-        this.grade = grade;
     }
 
     public String GetTeacher ()
@@ -54,9 +53,9 @@ public class Subject
 
             nonUnique = false;
 
-            for (Students s : E_GRADE.StudentList)
+            for (Account s : E_GRADE.ALL_Accounts)
             {
-                if(newId.compareTo(s.GetStudID()) == 0)
+                if(newId.compareTo(s.GetAccId()) == 0)
                 {
                     nonUnique = true;
                     break;
@@ -65,5 +64,10 @@ public class Subject
         } while (nonUnique);
 
         return newId;
+    }
+
+    public void SetGrade (int new_grade)
+    {
+        this.grade = new_grade;
     }
 }

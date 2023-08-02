@@ -7,7 +7,7 @@ class SubjectTest {
 
     @Test
     void getTeacher() {
-        Subject N_Sub = new Subject("Ivanov", "Math", 100);
+        Subject N_Sub = new Subject("Ivanov", "Math");
 
         //присвоюємо змінній значення, за допомогою метода GetTeacher
         String teacher_name = N_Sub.GetTeacher();
@@ -18,7 +18,7 @@ class SubjectTest {
 
     @Test
     void getSubjectName() {
-        Subject N_Sub = new Subject("Ivanov", "Math", 100);
+        Subject N_Sub = new Subject("Ivanov", "Math");
 
         //присвоюємо змінній значення, за допомогою метода GetSubjectName
         String subject = N_Sub.GetSubjectName();
@@ -28,19 +28,8 @@ class SubjectTest {
     }
 
     @Test
-    void getGrade() {
-        Subject N_Sub = new Subject("Ivanov", "Math", 100);
-
-        //присвоюємо змінній значення, за допомогою метода GetGrade
-        int grade = N_Sub.GetGrade();
-
-        //порівнюємо його з очікуваним значенням
-        Assertions.assertEquals(100, grade);
-    }
-
-    @Test
     void getSubID() {
-        Subject N_Sub = new Subject("Ivanov", "Math", 100);
+        Subject N_Sub = new Subject("Ivanov", "Math");
 
         //присвоюємо змінним значення, за допомогою метода GetSubID
         String id_sub = N_Sub.GetSubID();
@@ -53,7 +42,7 @@ class SubjectTest {
 
     @Test
     void get_new_SubID() {
-        Subject N_Sub = new Subject("Ivanov", "Math", 100);
+        Subject N_Sub = new Subject("Ivanov", "Math");
 
         //присвоюємо змінним значення, за допомогою метода Get_new_SubID
         String u_id = N_Sub.Get_new_SubID();

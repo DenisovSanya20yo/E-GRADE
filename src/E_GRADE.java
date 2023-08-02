@@ -4,64 +4,219 @@ import java.util.Scanner;
 
 public class E_GRADE
 {
-    public static ArrayList<Students> StudentList = new ArrayList<>();
+    public static ArrayList<Account> ALL_Accounts = new ArrayList<>();
+    public static ArrayList<Account> StudentAccList = new ArrayList<>();
+    public static ArrayList<Account> TeacherAccList = new ArrayList<>();
     public static void main(String[] args)
     {
         Scanner sc = new Scanner(System.in);
-
+        int choice;
         boolean bool = true;
-        while (bool)
+        do {
+            System.out.println("Welcome to E-GRADE. What you want to do?");
+            System.out.println("1)Create account\n" + "2)Log in\n" + "3)Quit");
+            choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice)
+            {
+                case 1:
+                    E_GRADE.CreateAcc(sc);
+                    break;
+                case 2:
+                    E_GRADE.LogIN(sc);
+                    break;
+                case 3:
+                    bool = false;
+                    break;
+            }
+
+
+        }while (bool);
+    }
+
+    public static void CreateAcc (Scanner sc)
+    {
+        boolean boo = true;
+        String u_Fname;
+        String u_Lname;
+        int u_age;
+        String u_password;
+        int choice_status;
+
+        do {
+            System.out.println("Enter your status (1-teacher, 2-student):");
+            choice_status = sc.nextInt();
+            sc.nextLine();
+
+            if(choice_status != 1 && choice_status != 2)
+            {
+                System.out.println("Invalid. Try again.");
+            }
+        }while (choice_status != 1 && choice_status != 2);
+
+        String u_status = " ";
+
+        switch (choice_status)
         {
-            bool = E_GRADE.PrintMenu(sc);
+            case 1:
+                u_status = "teacher";
+                break;
+            case 2:
+                u_status = "student";
+                break;
+        }
+
+        do {
+            System.out.println("Enter your first name:");
+            u_Fname = sc.nextLine();
+
+            if (u_Fname.isEmpty())
+            {
+                System.out.println("Invalid. Try again.");
+            }
+        }while (u_Fname.isEmpty());
+
+        do {
+            System.out.println("Enter your last name:");
+            u_Lname = sc.nextLine();
+
+            if (u_Lname.isEmpty())
+            {
+                System.out.println("Invalid.Try again.");
+            }
+        }while (u_Lname.isEmpty());
+
+        do {
+            System.out.println("Enter your age:");
+            u_age = sc.nextInt();
+            sc.nextLine();
+
+            if (u_age < 0 || u_age > 100)
+            {
+                System.out.println("Invalid. Try again.");
+            }
+        }while (u_age < 0 || u_age > 100);
+
+        do {
+            System.out.println("Enter new password:");
+            u_password = sc.nextLine();
+
+            if (u_password.isEmpty() || u_password.length() < 6 || u_password.length() > 12)
+            {
+                System.out.println("Invalid. Try again.");
+            }
+        }while (u_password.isEmpty() || u_password.length() < 6 || u_password.length() > 12);
+
+        if (u_status.equals("teacher"))
+        {
+            Account newAcc = new Account(u_status, u_Fname, u_Lname,u_age, u_password);
+
+            E_GRADE.TeacherAccList.add(newAcc);
+            E_GRADE.ALL_Accounts.add(newAcc);
+
+            System.out.println("Your personal id: " + newAcc.GetAccId());
+            while (boo)
+            {
+                boo = E_GRADE.PrintTeacherMenu(sc);
+            }
+        }
+        else if (u_status.equals("student"))
+        {
+            String u_group;
+            do {
+                System.out.println("Enter name of group:");
+                u_group = sc.nextLine();
+
+                if (u_group.isEmpty())
+                {
+                    System.out.println("Invalid. Try again.");
+                }
+            }while (u_group.isEmpty());
+
+            Account newAcc = new Account(u_status, u_Fname, u_Lname, u_age, u_group, u_password);
+
+            E_GRADE.StudentAccList.add(newAcc);
+            E_GRADE.ALL_Accounts.add(newAcc);
+
+            System.out.println("Your personal id: " + newAcc.GetAccId());
+
+            while (boo)
+            {
+                boo = E_GRADE.PrintStudentMenu(newAcc, sc);
+            }
         }
     }
 
-    //вивід меню користувача
-    public static boolean PrintMenu (Scanner sc)
+    //авторизація
+    public static void LogIN (Scanner sc)
+    {
+        String log_id;
+        String log_pass;
+
+        //вводимо id
+        System.out.println("Enter id to log in:");
+        log_id = sc.nextLine();
+
+        //вводимо пароль
+        System.out.println("Enter password to log in:");
+        log_pass = sc.nextLine();
+
+        for (Account a : E_GRADE.ALL_Accounts)
+        {
+            //шукаємо на відповідність у списку акаунтів
+            if (a.GetAccId().equals(log_id) && a.GetPass().equals(log_pass))
+            {
+                if (a.GetStatus().equals("teacher"))
+                {
+                    E_GRADE.PrintTeacherMenu(sc);
+                    break;
+                }
+                else if (a.GetStatus().equals("student"))
+                {
+                    E_GRADE.PrintStudentMenu(a, sc);
+                    break;
+                }
+            }
+        }
+
+
+    }
+
+    //вивід меню користувача для вчителя
+    public static boolean PrintTeacherMenu (Scanner sc)
     {
         int choice;
         //пропонуємо обрати дію, яку хоче зробити користувач
         do{
-            System.out.print("1)Add new student\n");
-            System.out.print("2)Add list of subjects for current student\n");
-            System.out.print("3)Show list of subject for current student\n");
-            System.out.print("4)Remove student from list of students\n");
-            System.out.print("5)Remove subject from list of subject\n");
-            System.out.print("6)Show list of students\n");
-            System.out.print("7)Quit\n");
+            System.out.println("1)Show list of students");
+            System.out.println("2)Show list of subject for current student");
+            System.out.println("3)Rate a student");
+            System.out.println("4)Quit");
             System.out.println("What would you like to do?");
             choice = sc.nextInt();
-            if (choice < 1 || choice > 6)
+            if (choice < 1 || choice > 4)
             {
                 System.out.println("Error. Try again");
             }
-        }while (choice < 1 || choice > 6);
+        }while (choice < 1 || choice > 4);
 
         //після, зробленого вибору переходемо до конструкції switch case для виклику відповідних функцій
         switch (choice)
         {
             case 1:
-                E_GRADE.AddStudent(sc); // додавання студентів
-                break;
-            case 2:
-                E_GRADE.UpdateStudSubList(sc);// додавання предметів для конкретного студента
-                break;
-            case 3:
-                E_GRADE.ShowSubList(sc); // вивід список предметів
-                break;
-            case 4:
-                E_GRADE.RemoveStud(sc);// видалення студента із списку
-                break;
-            case 5:
-                E_GRADE.RemoveSub(sc); // видалення студента зі списку
-                break;
-            case 6:
-                for (Students s : StudentList)
+                for (Account a : StudentAccList)
                 {
-                    s.PrintStudInfo(); // вивід списку студентів
+                    a.PrintAccInfo(); // вивід списку студентів
                 }
                 break;
-            case 7:
+            case 2:
+                E_GRADE.ShowSubList(sc); // вивід список предметів
+                break;
+            case 3:
+                E_GRADE.RateGrade(sc);
+                break;
+            case 4:
                 sc.nextLine(); // вихід
                 break;
         }
@@ -69,7 +224,7 @@ public class E_GRADE
         // меню виводиться до поки користувач не захоче вийти, в такому випадку функція повертає
         // false тоді робота циклу зупиняється
         boolean boo;
-        if (choice == 6)
+        if (choice == 4)
         {
             boo = false;
         }
@@ -80,115 +235,71 @@ public class E_GRADE
         return boo;
     }
 
-    //додаємо студента до списку
-    public static void AddStudent(Scanner sc)
+    //вивід меню користувача для студента
+    public static boolean PrintStudentMenu (Account theStud, Scanner sc)
     {
-        String studFname;
-        String studSname;
-        int studAge;
-        String nameOFgroup;
-        char choice;
+        int choice;
 
-        //вводимо ім'я студента
+        boolean boo;
         do {
-            sc.nextLine();
-            do {
-                System.out.println("Enter first name of student: ");
-                studFname = sc.nextLine();
-                if (studFname.isEmpty()) {
-                    System.out.println("Invalid. Try again.");
-                }
-            } while (studFname.isEmpty());
+            System.out.println("1)Show list of subjects");
+            System.out.println("2)Add subjects");
+            System.out.println("3)Remove subjects");
+            System.out.println("4)Show list of teacher");
+            System.out.println("5)Quit");
+            System.out.println("What would you like to do?");
 
-            //вводимо прізвище
-            do {
-                System.out.println("Enter last name of student: ");
-                studSname = sc.nextLine();
-                if (studSname.isEmpty()) {
-                    System.out.println("Invalid. Try again.");
-                }
-            } while (studSname.isEmpty());
-
-            //вводимо вік
-            do {
-                System.out.println("Enter age of student: ");
-                studAge = sc.nextInt();
-                sc.nextLine();
-                if (studAge <= 0 || studAge >= 100) {
-                    System.out.println("Invalid. Try again.");
-                }
-            } while (studAge <= 0 || studAge >= 100);
-
-            //вводимо назву групи
-            do {
-                System.out.println("Enter name of group: ");
-                nameOFgroup = sc.nextLine();
-                if (nameOFgroup.isEmpty()) {
-                    System.out.println("Invalid. Try again.");
-                }
-            } while (nameOFgroup.isEmpty());
-
-            //створюємо об'єкт класса Students та додаємо до списку студентів
-            Students newStudent = new Students(studFname, studSname, studAge, nameOFgroup);
-            StudentList.add(newStudent);
-
-            //запитуємо чи хоче користувач продовжувати додавати нових студентів
-            System.out.println("Enter '+' to continue, enter '-' to stop adding: ");
-            choice = sc.next().charAt(0);
-
-
-            if (choice == '+')
+            choice = sc.nextInt();
+            if (choice < 1 || choice > 5)
             {
-                continue;
+                System.out.println("Error. Try again");
             }
-            else if (choice == '-')
-            {
-                break;
-            }
+        }while (choice < 1 || choice > 5);
 
-        }while (true);
-    }
-
-    //пошук студента для якого треба додати список предметів
-    public static void UpdateStudSubList(Scanner sc)
-    {
-        String adding_StudID;
-
-        //запитуємо id студента до якого хочемо додати список предметів
-        sc.nextLine();
-        do {
-            System.out.print("Enter id of student: \n");
-            adding_StudID = sc.nextLine();
-
-            if (adding_StudID.isEmpty())
-            {
-                System.out.println("Invalid. Try again.");
-            }
-        }while (adding_StudID.isEmpty());
-
-        //пошук за id
-        for (Students s : StudentList)
+        switch (choice)
         {
-            //коли знаходимо id викликаємо функцію що додає створює об'єкт класу Subject та додає до списку предметів студента
-            if(s.GetStudID().equals(adding_StudID))
-            {
-                E_GRADE.AddSubjects(s, sc);
+            case 1:
+                theStud.ListOFsub();
                 break;
-            }
+            case 2:
+                E_GRADE.AddSubjects(theStud, sc);
+                break;
+            case 3:
+                E_GRADE.Removing(theStud, sc);
+                break;
+            case 4:
+                for (Account a : TeacherAccList)
+                {
+                    a.PrintAccInfo();
+                }
+                break;
+            case 5:
+                sc.nextLine();
+                break;
         }
+
+        if (choice == 5)
+        {
+            boo = false;
+        }
+        else
+        {
+            boo = true;
+        }
+
+        return boo;
     }
 
     // додавання предметів
-    public static void AddSubjects (Students uStud, Scanner sc)
+    public static void AddSubjects (Account uStud, Scanner sc)
     {
         String teacher_name;
         String new_subject;
-        int new_grade;
         char choice;
 
         do {
             sc.nextLine();
-            //вводимо повне ім'я студента
+            //вводимо повне ім'я вчителя
             do {
                 System.out.println("Enter teacher name: ");
                 teacher_name = sc.nextLine();
@@ -209,22 +320,10 @@ public class E_GRADE
                 }
             }while (new_subject.isEmpty());
 
-            //вводимо оцінку за предмет
-            do {
-                System.out.println("Enter grade for this subject: ");
-                new_grade = sc.nextInt();
-                sc.nextLine();
-
-                if (new_grade < 0 || new_grade > 100)
-                {
-                    System.out.println("Invalid. Try again.");
-                }
-            }while (new_grade < 0 || new_grade > 100);
-
-            //створюємо об'єкт классу Subject та викликаємо метод об'єкта uStud класу Students,
+            //створюємо об'єкт классу Subject та викликаємо метод об'єкта uStud класу Account,
             //що виконує додавання предмету до списку
-            Subject new_sub = new Subject(teacher_name, new_subject, new_grade);
-            uStud.addSub(new_sub);
+            Subject new_sub = new Subject(teacher_name, new_subject);
+            uStud.AddSub(new_sub);
 
             //запит на додавання предметів далі
             System.out.println("If you want continue, enter '+', else enter '-' to stop adding");
@@ -260,92 +359,99 @@ public class E_GRADE
         }while (studID.isEmpty());
 
         //пошук за id студента та виклик метода класу Students для виводу списку студентів
-        for (Students s : StudentList)
+        for (Account a : StudentAccList)
         {
-            if(s.GetStudID().equals(studID))
+            if(a.GetAccId().equals(studID))
             {
-                s.ListOFsub();
+                a.ListOFsub();
                 break;
             }
         }
     }
 
-    //видалення студента зі списку
-    public static void RemoveStud (Scanner sc)
+    //видалення предметів
+    public static void Removing (Account theStud, Scanner sc)
     {
-        String studID;
+        //викликаєм ф-ю що виводить список поточних предметів
+        theStud.ListOFsub();
+        String subID;
 
-        //вводимо id студента, що хочемо видалити
-        sc.nextLine();
+        char choice;
+
         do {
-            System.out.print("Enter id of student: \n");
-            studID = sc.nextLine();
+            sc.nextLine();
+            //вводимо id предмети який хочему видалити
+            do {
+                System.out.println("Enter id subject to remove from list:");
+                subID = sc.nextLine();
 
-            if (studID.isEmpty())
-            {
-                System.out.println("Invalid. Try again.");
-            }
-        }while (studID.isEmpty());
-
-        //пошук студента за id та видалення зі списку
-        int i = 0;
-        for (Students s : StudentList)
-        {
-            if(s.GetStudID().equals(studID))
-            {
-                StudentList.remove(i);
-                System.out.println();
-                for (Students x : StudentList)
-                {
-                    x.PrintStudInfo();
+                if (subID.isEmpty()) {
+                    System.out.println("Invalid. Try again.");
                 }
+            } while (subID.isEmpty());
+
+            //викликаємо ф-ю що видаляє предмети зі списку передаючи id предмети
+            theStud.RemoveFromSubList(subID);
+
+            //запит на додавання предметів далі
+            System.out.println("If you want continue, enter '+', else enter '-' to stop removing");
+            choice = sc.next().charAt(0);
+
+
+            if (choice == '+')
+            {
+                continue;
+            }
+            else if (choice == '-')
+            {
                 break;
             }
-            i++;
-        }
+        }while (true);
     }
 
-    //видалення предмету
-    public static void RemoveSub (Scanner sc)
+    //оцінювання предметів
+    public static void RateGrade (Scanner sc)
     {
-        String studID;
+        char choice;
 
-        //вводимо id студента, щоб видалити предмет зі списку предметів конкретного студента
-        sc.nextLine();
+
         do {
-            System.out.print("Enter id of student: \n");
-            studID = sc.nextLine();
+            String curID;
+            //вводимо id студента якому будемо ставити оцюнки
+            do {
+                System.out.println("Enter id student to rate:");
+                curID = sc.nextLine();
 
-            if (studID.isEmpty())
+                if (curID.isEmpty())
+                {
+                    System.out.println("Invalid. Try again.");
+                }
+            }while (curID.isEmpty());
+
+            //шукаємо цього студента в списку
+
+            for (Account a : E_GRADE.StudentAccList)
             {
-                System.out.println("Invalid. Try again.");
+                if (a.GetAccId().equals(curID))
+                {
+                    a.SetGrade(sc);//функція, що виставляє оцінки
+                }
             }
-        }while (studID.isEmpty());
 
-        //пошук студента за id
-        int i = 0;
-        for (Students s : StudentList)
-        {
-            if(s.GetStudID().equals(studID))
+            //запит на продовження оцінювання
+            System.out.println("If you want continue, enter '+', else enter '-' to stop rating");
+            choice = sc.next().charAt(0);
+
+
+            if (choice == '+')
             {
-                String r_subID;
-
-                //вводимо та шукаємо предмет за його id
-                sc.nextLine();
-                do {
-                    System.out.print("Enter id of subject: \n");
-                    r_subID = sc.nextLine();
-
-                    if (r_subID.isEmpty())
-                    {
-                        System.out.println("Invalid. Try again.");
-                    }
-                }while (r_subID.isEmpty());
-
-                s.RemoveFromSubList(r_subID);// виклик методу класу Students, що видаляє предмет
+                continue;
+            }
+            else if (choice == '-')
+            {
                 break;
             }
-            i++;
-        }
+
+        }while (true);
     }
 }
